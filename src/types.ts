@@ -21,9 +21,11 @@ export interface RoleCategory {
 }
 
 export interface Project {
+  id: string;
   title: string;
   description: string;
   categories: RoleCategory[];
+  createdAt: number;
 }
 
 export type NodeKind = "project" | "category" | "role";
@@ -33,3 +35,5 @@ export interface FeedbackNote {
   nodeKind: NodeKind;
   text: string;
 }
+
+export type AppSection = "workspace" | "projects" | "feedback" | "history" | "memory" | "settings";

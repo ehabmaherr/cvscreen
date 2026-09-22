@@ -25,7 +25,7 @@ export default function FeedbackDot({
         title={note ? "Feedback note added" : "Add feedback"}
         onClick={() => setOpen((v) => !v)}
       >
-        {note ? "✓" : "+"}
+        {note ? "1" : "+"}
       </button>
       {open && (
         <div className="feedback-popover">

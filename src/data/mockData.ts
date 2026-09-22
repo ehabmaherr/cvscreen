@@ -1,4 +1,4 @@
-import type { Project } from "../types";
+import type { Project, RoleCategory } from "../types";
 
 function candidates(
   names: [string, number, string[], string[], number][],
@@ -13,11 +13,7 @@ function candidates(
   }));
 }
 
-export const mockProject: Project = {
-  title: "Customer Insights Platform",
-  description:
-    "A web platform that ingests support tickets and product usage data to surface churn risk and customer health scores for the CS team. Includes a React dashboard, a data pipeline, and an ML model serving predictions.",
-  categories: [
+const mockCategories: RoleCategory[] = [
     {
       id: "cat-pm",
       title: "Project Management",
@@ -138,5 +134,16 @@ export const mockProject: Project = {
         },
       ],
     },
-  ],
-};
+];
+
+let nextProjectId = 1;
+
+export function createProject(title: string, description: string): Project {
+  return {
+    id: `project-${nextProjectId++}`,
+    title,
+    description,
+    categories: mockCategories,
+    createdAt: Date.now(),
+  };
+}

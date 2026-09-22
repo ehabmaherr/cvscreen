@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { NodeKind, Project, Role, RoleCategory } from "../types";
 import type { ScoreDomain, Theme } from "../utils/heat";
-import { heatColor, textColorOn } from "../utils/heat";
+import { heatColor, heatColorAlpha } from "../utils/heat";
 import { categoryTopScore, roleTopScore } from "../utils/scores";
 import FeedbackDot from "./FeedbackDot";
 import CandidatePanel from "./CandidatePanel";
@@ -27,6 +27,7 @@ interface Positioned {
 
 const CENTER = 50;
 const RING_RADIUS = 34;
+const BUBBLE_STEPS = [0.2, 0.35, 0.5, 0.65, 0.8];
 
 function layoutCategories(categories: RoleCategory[]): Positioned[] {
   const n = categories.length;
@@ -63,37 +64,32 @@ export default function MapView({
     <div className="map-view">
       <div className="map-canvas">
         <svg className="map-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <defs>
-            {positioned.map((p) => (
-              <marker
-                key={p.category.id}
-                id={`arrow-${p.category.id}`}
-                viewBox="0 0 10 10"
-                refX="8"
-                refY="5"
-                markerWidth="5"
-                markerHeight="5"
-                orient="auto-start-reverse"
-              >
-                <path d="M0,0 L10,5 L0,10 z" fill={heatColor(p.score, theme, mapScoreDomain)} />
-              </marker>
-            ))}
-          </defs>
-          {positioned.map((p) => (
-            <line
-              key={p.category.id}
-              x1={CENTER}
-              y1={CENTER}
-              x2={p.x}
-              y2={p.y}
-              className={
-                "edge" + (hoveredCategoryId === p.category.id ? " edge-active" : "")
-              }
-              stroke={heatColor(p.score, theme, mapScoreDomain)}
-              strokeOpacity={hoveredCategoryId === p.category.id ? 1 : 0.55}
-              markerEnd={`url(#arrow-${p.category.id})`}
-            />
-          ))}
+          {positioned.map((p) => {
+            const active = hoveredCategoryId === p.category.id;
+            const color = heatColor(p.score, theme, mapScoreDomain);
+            return (
+              <g key={p.category.id}>
+                <line
+                  x1={CENTER}
+                  y1={CENTER}
+                  x2={p.x}
+                  y2={p.y}
+                  className="edge-guide"
+                  strokeOpacity={active ? 0.3 : 0.15}
+                />
+                {BUBBLE_STEPS.map((t) => (
+                  <circle
+                    key={t}
+                    cx={CENTER + (p.x - CENTER) * t}
+                    cy={CENTER + (p.y - CENTER) * t}
+                    r={(active ? 1 : 0.75) + t * 1.6}
+                    fill={color}
+                    opacity={(active ? 0.55 : 0.35) + t * 0.4}
+                  />
+                ))}
+              </g>
+            );
+          })}
         </svg>
 
         <div
@@ -110,35 +106,37 @@ export default function MapView({
           <div className="node-desc">{project.description}</div>
         </div>
 
-        {positioned.map((p) => (
-          <div
-            key={p.category.id}
-            className={
-              "node node-category" +
-              (hoveredCategoryId === p.category.id ? " node-active" : "")
-            }
-            style={{
-              left: `${p.x}%`,
-              top: `${p.y}%`,
-              background: heatColor(p.score, theme, mapScoreDomain),
-              color: textColorOn(p.score, theme, mapScoreDomain),
-              borderColor: heatColor(p.score, theme, mapScoreDomain),
-            }}
-            onMouseEnter={() => setHoveredCategoryId(p.category.id)}
-            onMouseLeave={() => setHoveredCategoryId(null)}
-          >
-            <FeedbackDot
-              nodeId={p.category.id}
-              nodeKind="category"
-              note={notes[p.category.id]}
-              onSave={onSaveNote}
-            />
-            <div className="node-title">{p.category.title}</div>
-            <div className="node-count">
-              {p.category.roles.length} role(s) &middot; avg {p.score}%
+        {positioned.map((p) => {
+          const color = heatColor(p.score, theme, mapScoreDomain);
+          return (
+            <div
+              key={p.category.id}
+              className={
+                "node node-category" +
+                (hoveredCategoryId === p.category.id ? " node-active" : "")
+              }
+              style={{
+                left: `${p.x}%`,
+                top: `${p.y}%`,
+                borderColor: color,
+                boxShadow: `0 0 0 1px ${heatColorAlpha(p.score, theme, mapScoreDomain, 0.25)}, 0 6px 24px -6px ${heatColorAlpha(p.score, theme, mapScoreDomain, 0.55)}`,
+              }}
+              onMouseEnter={() => setHoveredCategoryId(p.category.id)}
+              onMouseLeave={() => setHoveredCategoryId(null)}
+            >
+              <FeedbackDot
+                nodeId={p.category.id}
+                nodeKind="category"
+                note={notes[p.category.id]}
+                onSave={onSaveNote}
+              />
+              <div className="node-title">{p.category.title}</div>
+              <div className="node-count" style={{ color }}>
+                {p.category.roles.length} role(s) &middot; avg {p.score}%
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {hovered && (
           <div
