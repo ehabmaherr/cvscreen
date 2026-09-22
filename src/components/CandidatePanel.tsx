@@ -1,11 +1,20 @@
 import type { Role } from "../types";
+import type { ScoreDomain, Theme } from "../utils/heat";
+import ScoreMeter from "./ScoreMeter";
 
 interface CandidatePanelProps {
   role: Role | null;
   onClose: () => void;
+  theme: Theme;
+  scoreDomain: ScoreDomain;
 }
 
-export default function CandidatePanel({ role, onClose }: CandidatePanelProps) {
+export default function CandidatePanel({
+  role,
+  onClose,
+  theme,
+  scoreDomain,
+}: CandidatePanelProps) {
   if (!role) return null;
 
   return (
@@ -34,9 +43,9 @@ export default function CandidatePanel({ role, onClose }: CandidatePanelProps) {
           <li key={c.id} className="candidate-card">
             <div className="candidate-card-top">
               <span className="candidate-name">{c.name}</span>
-              <span className="candidate-score">{c.matchScore}%</span>
+              <span className="candidate-meta">{c.yearsExperience} yrs</span>
             </div>
-            <div className="candidate-meta">{c.yearsExperience} yrs experience</div>
+            <ScoreMeter score={c.matchScore} theme={theme} scoreDomain={scoreDomain} />
             <div className="candidate-tags">
               {c.matchedSkills.map((s) => (
                 <span key={s} className="tag tag-match">

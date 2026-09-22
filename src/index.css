@@ -1,14 +1,17 @@
 :root {
-  --text: #4b4a55;
-  --text-h: #16151a;
-  --bg: #fafafa;
+  --text: #48566c;
+  --text-h: #0f1b2d;
+  --bg: #eef5fb;
   --surface: #ffffff;
-  --border: #e3e2e6;
-  --border-strong: #c7c6cc;
-  --accent: #7c3aed;
-  --accent-bg: rgba(124, 58, 237, 0.08);
-  --accent-border: rgba(124, 58, 237, 0.4);
-  --shadow: rgba(20, 20, 30, 0.08) 0 4px 16px -4px;
+  --surface-alt: #e9f6f0;
+  --border: #d7e6f0;
+  --border-strong: #b7cfe2;
+  --accent: #2563eb;
+  --accent-bg: rgba(37, 99, 235, 0.08);
+  --accent-border: rgba(37, 99, 235, 0.35);
+  --good: #16a34a;
+  --good-bg: rgba(22, 163, 74, 0.1);
+  --shadow: rgba(20, 40, 70, 0.08) 0 4px 16px -4px;
 
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
@@ -25,29 +28,35 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --text: #b4b3bd;
-    --text-h: #f3f3f6;
-    --bg: #131319;
-    --surface: #1b1b23;
-    --border: #2c2c36;
-    --border-strong: #3d3d49;
-    --accent: #a78bfa;
-    --accent-bg: rgba(167, 139, 250, 0.12);
-    --accent-border: rgba(167, 139, 250, 0.45);
+    --text: #a9b8cc;
+    --text-h: #edf2fa;
+    --bg: #0a1220;
+    --surface: #111b2d;
+    --surface-alt: #0f2420;
+    --border: #1e2c42;
+    --border-strong: #2c4157;
+    --accent: #5b9dfa;
+    --accent-bg: rgba(91, 157, 250, 0.14);
+    --accent-border: rgba(91, 157, 250, 0.45);
+    --good: #34d399;
+    --good-bg: rgba(52, 211, 153, 0.14);
     --shadow: rgba(0, 0, 0, 0.4) 0 4px 16px -4px;
   }
 }
 
 :root[data-theme="dark"] {
-  --text: #b4b3bd;
-  --text-h: #f3f3f6;
-  --bg: #131319;
-  --surface: #1b1b23;
-  --border: #2c2c36;
-  --border-strong: #3d3d49;
-  --accent: #a78bfa;
-  --accent-bg: rgba(167, 139, 250, 0.12);
-  --accent-border: rgba(167, 139, 250, 0.45);
+  --text: #a9b8cc;
+  --text-h: #edf2fa;
+  --bg: #0a1220;
+  --surface: #111b2d;
+  --surface-alt: #0f2420;
+  --border: #1e2c42;
+  --border-strong: #2c4157;
+  --accent: #5b9dfa;
+  --accent-bg: rgba(91, 157, 250, 0.14);
+  --accent-border: rgba(91, 157, 250, 0.45);
+  --good: #34d399;
+  --good-bg: rgba(52, 211, 153, 0.14);
   --shadow: rgba(0, 0, 0, 0.4) 0 4px 16px -4px;
 }
 
