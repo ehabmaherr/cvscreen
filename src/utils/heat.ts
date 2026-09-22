@@ -5,13 +5,13 @@ export interface ScoreDomain {
   max: number;
 }
 
-// Amber -> red "heat" ramp, one step set per surface (validated with
+// Single-hue blue sequential ramp (validated with
 // dataviz/scripts/validate_palette.js --ordinal against each mode's page
-// background: lightness-monotone, >=0.06 adjacent OKLCH L gap, light end
-// clears 2:1 contrast). Multi-hue by design -- this is a heat scale, not a
-// single-series sequential ramp.
-const LIGHT_HEAT = ["#e9980c", "#c2540a", "#99270a", "#760d0a", "#580912", "#3c0713"];
-const DARK_HEAT = ["#f3c968", "#f3933f", "#f1521e", "#df1f11", "#bc1021", "#950f2e"];
+// background: single hue, lightness-monotone, >=0.06 adjacent OKLCH L gap,
+// light end clears 2:1 contrast). Low score -> lighter/brighter blue,
+// high score -> deeper blue.
+const LIGHT_BLUE = ["#1772e8", "#135fc3", "#104d9e", "#0c3b79", "#082954", "#05172e"];
+const DARK_BLUE = ["#7db0f2", "#5396ee", "#2a7dea", "#1566d1", "#1154ac", "#0d4287"];
 
 function hexToRgb(hex: string): [number, number, number] {
   const n = parseInt(hex.slice(1), 16);
@@ -22,8 +22,8 @@ function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
 }
 
-function heatRgb(score: number, theme: Theme, domain: ScoreDomain): [number, number, number] {
-  const stops = theme === "dark" ? DARK_HEAT : LIGHT_HEAT;
+function scoreRgb(score: number, theme: Theme, domain: ScoreDomain): [number, number, number] {
+  const stops = theme === "dark" ? DARK_BLUE : LIGHT_BLUE;
   const span = domain.max - domain.min || 1;
   const t = Math.min(1, Math.max(0, (score - domain.min) / span));
   const scaled = t * (stops.length - 1);
@@ -38,30 +38,19 @@ function heatRgb(score: number, theme: Theme, domain: ScoreDomain): [number, num
   ];
 }
 
-/** Solid heat color for a match score, scaled across this project's score range. */
+/** Solid blue for a match score, scaled across this project's score range. */
 export function heatColor(score: number, theme: Theme, domain: ScoreDomain): string {
-  const [r, g, b] = heatRgb(score, theme, domain).map(Math.round);
+  const [r, g, b] = scoreRgb(score, theme, domain).map(Math.round);
   return `rgb(${r}, ${g}, ${b})`;
 }
 
-/** A lighter tint of the same heat color -- for meter tracks / node washes. */
+/** A lighter tint of the same score color -- for meter tracks / node washes. */
 export function heatColorAlpha(
   score: number,
   theme: Theme,
   domain: ScoreDomain,
   alpha: number,
 ): string {
-  const [r, g, b] = heatRgb(score, theme, domain).map(Math.round);
+  const [r, g, b] = scoreRgb(score, theme, domain).map(Math.round);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
-/** Relative luminance (WCAG) to pick legible text color on a heat fill. */
-export function textColorOn(score: number, theme: Theme, domain: ScoreDomain): string {
-  const [r, g, b] = heatRgb(score, theme, domain);
-  const lin = [r, g, b].map((c) => {
-    const s = c / 255;
-    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
-  });
-  const luminance = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
-  return luminance > 0.42 ? "#1a1005" : "#fff7ec";
 }

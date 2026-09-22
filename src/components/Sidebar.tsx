@@ -1,12 +1,13 @@
 import type { AppSection, Project } from "../types";
-import type { Theme } from "../utils/heat";
 import {
+  IconChevron,
   IconFeedback,
   IconHistory,
   IconMemory,
   IconPlus,
   IconProjects,
   IconSettings,
+  IconWorkspace,
 } from "./icons";
 
 interface SidebarProps {
@@ -14,10 +15,11 @@ interface SidebarProps {
   activeProjectId: string | null;
   activeSection: AppSection;
   feedbackCount: number;
-  theme: Theme;
+  collapsed: boolean;
   onSelectProject: (id: string) => void;
   onSelectSection: (section: AppSection) => void;
   onNewProject: () => void;
+  onToggleCollapsed: () => void;
 }
 
 const NAV_ITEMS: { section: AppSection; label: string; Icon: typeof IconProjects }[] = [
@@ -33,16 +35,65 @@ export default function Sidebar({
   activeProjectId,
   activeSection,
   feedbackCount,
-  theme,
+  collapsed,
   onSelectProject,
   onSelectSection,
   onNewProject,
+  onToggleCollapsed,
 }: SidebarProps) {
+  if (collapsed) {
+    return (
+      <aside className="rail">
+        <span className="rail-logo" aria-hidden="true" />
+        <button
+          type="button"
+          className={"rail-item" + (activeSection === "workspace" ? " active" : "")}
+          onClick={() => onSelectSection("workspace")}
+          title="Workspace"
+        >
+          <IconWorkspace />
+        </button>
+        {NAV_ITEMS.map(({ section, label, Icon }) => (
+          <button
+            key={section}
+            type="button"
+            className={"rail-item" + (activeSection === section ? " active" : "")}
+            onClick={() => onSelectSection(section)}
+            title={label}
+          >
+            <Icon />
+            {section === "feedback" && feedbackCount > 0 && (
+              <span className="rail-item-badge">{feedbackCount}</span>
+            )}
+          </button>
+        ))}
+        <button
+          type="button"
+          className="rail-expand"
+          onClick={onToggleCollapsed}
+          title="Expand sidebar"
+          aria-label="Expand sidebar"
+        >
+          <IconChevron />
+        </button>
+      </aside>
+    );
+  }
+
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
         <span className="sidebar-logo" aria-hidden="true" />
         CV Screen
+        <button
+          type="button"
+          className="sidebar-collapse-btn"
+          onClick={onToggleCollapsed}
+          title="Collapse sidebar"
+          aria-label="Collapse sidebar"
+        >
+          <IconChevron style={{ transform: "rotate(180deg)" }} />
+        </button>
       </div>
 
       <button type="button" className="sidebar-new-btn" onClick={onNewProject}>
@@ -85,10 +136,6 @@ export default function Sidebar({
           </button>
         ))}
       </nav>
-
-      <div className="sidebar-theme-note">
-        {theme === "dark" ? "Dark mode" : "Light mode"} &middot; toggle in Settings
-      </div>
     </aside>
   );
 }

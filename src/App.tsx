@@ -45,6 +45,7 @@ function App() {
     {},
   );
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
 
   const activeProject = projects.find((p) => p.id === activeProjectId) ?? null;
   const notes = (activeProjectId && notesByProject[activeProjectId]) || {};
@@ -113,10 +114,11 @@ function App() {
         activeProjectId={activeProjectId}
         activeSection={activeSection}
         feedbackCount={feedbackEntries.length}
-        theme={theme}
+        collapsed={sidebarCollapsed}
         onSelectProject={handleSelectProject}
         onSelectSection={setActiveSection}
         onNewProject={handleNewProject}
+        onToggleCollapsed={() => setSidebarCollapsed((c) => !c)}
       />
 
       <div className="app-body">

@@ -66,3 +66,20 @@ export function IconPlus(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function IconWorkspace(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="8" cy="8" r="6.2" />
+      <circle cx="8" cy="8" r="1.8" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function IconChevron(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M6 3l5 5-5 5" />
+    </svg>
+  );
+}
