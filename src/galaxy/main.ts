@@ -7,6 +7,42 @@ import { fibonacciSphere, jitterInSphere } from "./layout";
 import "./style.css";
 
 // ---------------------------------------------------------------------------
+// Fail loudly, not silently -- a blank page gives no signal to debug from.
+// Registered first so it catches any error below, including a WebGL
+// context that fails to create in a restrictive host environment.
+// ---------------------------------------------------------------------------
+
+function showFatalError(err: unknown) {
+  const message = err instanceof Error ? err.message : String(err);
+  const host = document.getElementById("app");
+  if (!host) return;
+  host.innerHTML = `
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#0b0e16;color:#e6ecf7;font:14px/1.5 system-ui,sans-serif;padding:24px;text-align:center;">
+      <div style="max-width:420px;">
+        <div style="font-size:15px;font-weight:700;margin-bottom:8px;">Candidate Galaxy couldn't start</div>
+        <div style="color:#9aa8c4;font-size:12.5px;">${message.replace(/</g, "&lt;")}</div>
+      </div>
+    </div>`;
+  // eslint-disable-next-line no-console
+  console.error("[candidate-galaxy]", err);
+}
+
+window.addEventListener("error", (e) => showFatalError(e.error ?? e.message));
+window.addEventListener("unhandledrejection", (e) => showFatalError(e.reason));
+
+if (!window.WebGLRenderingContext) {
+  showFatalError(new Error("This browser has no WebGL support."));
+  throw new Error("no-webgl");
+}
+{
+  const probe = document.createElement("canvas").getContext("webgl2") ?? document.createElement("canvas").getContext("webgl");
+  if (!probe) {
+    showFatalError(new Error("Could not create a WebGL context (blocked by the browser or sandbox)."));
+    throw new Error("no-webgl-context");
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Data
 // ---------------------------------------------------------------------------
 
