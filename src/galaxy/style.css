@@ -1,0 +1,332 @@
+:root {
+  color-scheme: light dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font: 14px/1.45 system-ui, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: var(--g-bg);
+  transition: background 0.25s ease;
+}
+
+#canvas-host {
+  position: absolute;
+  inset: 0;
+}
+
+#canvas-host canvas {
+  display: block;
+}
+
+/* ---- Top bar ---- */
+
+.g-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.g-topbar > * {
+  pointer-events: auto;
+}
+
+.g-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--g-text-h);
+  background: var(--g-surface);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--g-border);
+  border-radius: 999px;
+  padding: 9px 16px;
+}
+
+.g-title-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3987e5;
+  box-shadow: 0 0 8px #3987e5;
+}
+
+.g-title-sub {
+  color: var(--g-text-muted);
+  font-weight: 400;
+}
+
+.g-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.g-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--g-border);
+  background: var(--g-surface);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--g-text-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 15px;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.g-btn:hover {
+  border-color: #3987e5;
+  box-shadow: 0 0 0 3px rgba(57, 135, 229, 0.16);
+}
+
+/* ---- Legend ---- */
+
+.g-legend {
+  position: absolute;
+  left: 22px;
+  bottom: 22px;
+  z-index: 5;
+  background: var(--g-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--g-border);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 190px;
+}
+
+.g-legend-title {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--g-text-muted);
+  padding: 2px 6px 8px;
+}
+
+.g-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--g-text);
+  font-size: 12.5px;
+  text-align: left;
+  transition: background 0.12s ease, opacity 0.12s ease;
+}
+
+.g-legend-item:hover {
+  background: rgba(57, 135, 229, 0.1);
+}
+
+.g-legend-item.off {
+  opacity: 0.4;
+}
+
+.g-legend-swatch {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border-radius: 3px;
+}
+
+.g-legend-label {
+  flex: 1;
+  color: var(--g-text-h);
+  font-weight: 600;
+}
+
+.g-legend-count {
+  color: var(--g-text-muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+}
+
+/* ---- Tooltip (hover) ---- */
+
+.g-tooltip {
+  position: absolute;
+  z-index: 8;
+  pointer-events: none;
+  background: var(--g-surface-strong);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--g-border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--g-text-h);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.35);
+  transform: translate(-50%, -130%);
+  white-space: nowrap;
+  transition: opacity 0.1s ease;
+}
+
+.g-tooltip strong {
+  font-size: 12.5px;
+}
+
+.g-tooltip .g-tooltip-sub {
+  color: var(--g-text-muted);
+  font-size: 11px;
+}
+
+/* ---- Detail card (click) ---- */
+
+.g-detail {
+  position: absolute;
+  top: 78px;
+  right: 22px;
+  bottom: 22px;
+  width: 280px;
+  z-index: 6;
+  background: var(--g-surface-strong);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--g-border);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.4);
+  transform: translateX(0);
+  opacity: 1;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.g-detail.is-closed {
+  transform: translateX(24px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.g-detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.g-detail-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--g-text-h);
+}
+
+.g-detail-close {
+  border: none;
+  background: none;
+  color: var(--g-text-muted);
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.g-detail-domain {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin: 6px 0 14px;
+  width: fit-content;
+}
+
+.g-detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--g-border);
+  font-size: 12.5px;
+}
+
+.g-detail-row-label {
+  color: var(--g-text-muted);
+}
+
+.g-detail-row-value {
+  color: var(--g-text-h);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.g-detail-skills-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--g-text-muted);
+  margin: 14px 0 8px;
+}
+
+.g-detail-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.g-detail-skill {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(57, 135, 229, 0.14);
+  color: var(--g-text-h);
+}
+
+.g-detail-hint {
+  margin-top: auto;
+  font-size: 11px;
+  color: var(--g-text-muted);
+  padding-top: 12px;
+}
+
+/* ---- Hint (idle state) ---- */
+
+.g-hint {
+  position: absolute;
+  bottom: 22px;
+  right: 22px;
+  z-index: 5;
+  font-size: 11.5px;
+  color: var(--g-text-muted);
+  background: var(--g-surface);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--g-border);
+  border-radius: 999px;
+  padding: 7px 14px;
+}
